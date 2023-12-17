@@ -7,7 +7,9 @@ import cv2
 from PIL import Image
 import torch.nn.functional as F
 import os
-from flask import jsonify, make_response
+from flask import jsonify, make_response, request
+import requests
+
 
 dirname = os.path.dirname(__file__)
 
@@ -72,8 +74,24 @@ def BraitPrediction(img_path):
 
 
 @app.route('/')
-@app.route('/index')
+@app.route('/brait/prediction', methods=['GET', 'POST'])
 def index():
+    if request.method == 'POST':
+        image_path = request.json["imagePath"]
+        image = requests.get(image_path, stream=True).raw
+        brait_prediction_result = BraitPrediction(image)
+        text = ''.join(brait_prediction_result)
+
+        return make_response(jsonify(
+            {
+                "succes": True,
+                "message": "succes translate braile image",
+                "data": {
+                    "text": text
+                }
+            }
+        ), 200)
+
     filename = os.path.join(dirname, 'image/imageTest1.jpeg')
     brait_prediction_result = BraitPrediction(filename)
     text = ''.join(brait_prediction_result)
