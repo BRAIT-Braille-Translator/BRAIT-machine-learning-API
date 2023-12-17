@@ -30,7 +30,7 @@ jobs:
           GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
           FLASK_APP: ${{ secrets.FLASK_APP }}
         run: |
-          gcloud run deploy back-end-service-brait \
+          gcloud run deploy brait-machine-learning-api \
             --image asia-southeast2-docker.pkg.dev/$GOOGLE_PROJECT/ci-cd-pipeline/brait-machine-learning-api:latest \
             --platform managed \
             --region asia-southeast2 \
