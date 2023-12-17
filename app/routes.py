@@ -7,6 +7,8 @@ import cv2
 from PIL import Image
 import torch.nn.functional as F
 import os
+from flask import jsonify, make_response
+
 dirname = os.path.dirname(__file__)
 
 
@@ -43,15 +45,15 @@ def BraitPrediction(img_path):
     model = BraitCnn()
     model_path = filename = os.path.join(dirname, 'ml-model/BRAIT_PYTORCH.pth')
     model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-    #prepocess image inputan convert jadi RGB
+    # prepocess image inputan convert jadi RGB
     image = Image.open(img_path)
     image = image.convert('RGB')
 
-    #segmentasi image inputan
-    width, height = image.size #mengambil ukuran size image
-    jumlah_segment = round(width/height/0.78) #menentukan jumlah segment huruf braille
+    # segmentasi image inputan
+    width, height = image.size  # mengambil ukuran size image
+    jumlah_segment = round(width / height / 0.78)  # menentukan jumlah segment huruf braille
     print(jumlah_segment)
-    segment = width/jumlah_segment
+    segment = width / jumlah_segment
     print(segment)
 
     tamp = []
@@ -73,5 +75,14 @@ def BraitPrediction(img_path):
 @app.route('/index')
 def index():
     filename = os.path.join(dirname, 'image/imageTest1.jpeg')
-
-    return BraitPrediction(filename)
+    brait_prediction_result = BraitPrediction(filename)
+    text = ''.join(brait_prediction_result)
+    return make_response(jsonify(
+        {
+            "succes": True,
+            "message": "succes translate braile image",
+            "data": {
+                "text": text
+            }
+        }
+    ), 200)
