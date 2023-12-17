@@ -4,5 +4,5 @@ COPY requirements.txt .
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-EXPOSE 3000
-CMD ["gunicorn","wsgi:app","-b","0.0.0.0:3000"]
+EXPOSE 8080
+CMD ["gunicorn","wsgi:app","-b","0.0.0.0:8080"]
